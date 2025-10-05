@@ -1,27 +1,33 @@
 """This script loads in and inspect the .wav IQ data."""
 
-from  scipy.io import wavfile
+import argparse
+from scipy.io import wavfile
 import numpy as np
 import matplotlib.pyplot as plt
 
+# Constants for plotting
+PLOT_SAMPLES = 500
+HIST_BINS = 512
 
-def load_data(filepath: str):
+
+def load_data(filepath: str) -> tuple[int, float, np.ndarray]:
     """Wrapper for loading in data."""
     fs, data = wavfile.read(filepath)
-    Ts = 1/fs
+    Ts = 1 / fs
     return fs, Ts, data
 
 
-if __name__=="__main__":
-    
-    dir = 'IQ/2025_07_12/'
-    file = '15-26-26_103900000Hz.wav'
+if __name__ == "__main__":
+
+    parser = argparse.ArgumentParser(description='Load and inspect IQ data from .wav files')
+    parser.add_argument('filepath', help='Path to the .wav file containing IQ data')
+    args = parser.parse_args()
 
     # load the .wav file
-    fs, Ts, data = load_data(dir + file)
+    fs, Ts, data = load_data(args.filepath)
 
-    print(f'\nSampling rate:       {fs/1e6} MHz')
-    print(f'Sample duration:     {Ts*1e6} us')
+    print(f'\nSampling rate:       {fs / 1e6} MHz')
+    print(f'Sample duration:     {Ts * 1e6} us')
     print(f'Length of recording: {Ts * len(data):.3f} s')
 
     # extract the IQ data
@@ -33,18 +39,18 @@ if __name__=="__main__":
     print(f'\nUnique I values: {len(np.unique(I))}')
     print(f'Unique Q values: {len(np.unique(Q))}')
 
-    # plot the first 1000 samples of the data
-    t = Ts * np.arange(500) * 1e3  # time axis
+    # plot the first samples of the data
+    t = Ts * np.arange(PLOT_SAMPLES) * 1e3  # time axis
     plt.figure()
-    plt.plot(t, I[:500], label = 'I')
-    plt.plot(t, Q[:500], label = 'Q')
+    plt.plot(t, I[:PLOT_SAMPLES], label='I')
+    plt.plot(t, Q[:PLOT_SAMPLES], label='Q')
     plt.title('FM Baseband IQ Data')
     plt.xlabel('Time (ms)')
     plt.legend()
 
     # plot a histogram of the I data to see if clipping is taking place
     plt.figure()
-    plt.hist(I, bins=512, log=True)
+    plt.hist(I, bins=HIST_BINS, log=True)
     plt.title('I Component Histogram')
     plt.xlabel('Sample values')
     plt.ylabel('Value counts (log scale)')
