@@ -40,3 +40,15 @@ Run any script with `-h` or `--help` for more information.
 - NumPy
 - SciPy
 - Matplotlib
+
+## Installation
+
+Install dependencies using conda:
+```bash
+conda install --file requirements.txt
+```
+
+Or using pip:
+```bash
+pip install -r requirements.txt
+```
