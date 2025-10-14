@@ -1,4 +1,4 @@
-"""This script loads in and inspect the .wav IQ data."""
+"""This script loads in and inspects the .wav IQ data."""
 
 import argparse
 from scipy.io import wavfile
@@ -15,6 +15,19 @@ def load_data(filepath: str) -> tuple[int, float, np.ndarray]:
     fs, data = wavfile.read(filepath)
     Ts = 1 / fs
     return fs, Ts, data
+
+
+def load_iq_complex(filepath: str) -> tuple[int, float, np.ndarray]:
+    """Load IQ data and return as complex signal.
+
+    Returns:
+        fs: Sampling frequency in Hz
+        Ts: Sampling period in seconds
+        r: Complex signal (I + jQ)
+    """
+    fs, Ts, data = load_data(filepath)
+    I, Q = data[:, 0], data[:, 1]
+    return fs, Ts, I + 1j * Q
 
 
 if __name__ == "__main__":

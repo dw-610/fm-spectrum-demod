@@ -4,7 +4,7 @@ import argparse
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.io import wavfile
-from loading import load_data
+from loading import load_iq_complex
 
 # Constants for visualization
 PHASE_PLOT_SAMPLES = 2000  # Number of samples to display in phase plot
@@ -38,12 +38,8 @@ if __name__ == "__main__":
     parser.add_argument('-k', '--freq-dev', type=float, default=75e3, help='Frequency deviation in Hz (default: 75000)')
     args = parser.parse_args()
 
-    # load in the IQ data
-    fs, Ts, data = load_data(args.filepath)
-
-    # split into IQ components and the combine into the complex signal
-    I, Q = data[:, 0], data[:, 1]
-    r = I + 1j * Q
+    # load in the IQ data as complex signal
+    fs, Ts, r = load_iq_complex(args.filepath)
 
     # get the phase of the signal - unwrap the phase!
     phi = np.angle(r)
